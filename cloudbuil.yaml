@@ -1,0 +1,26 @@
+steps:
+  # Step 1: Clone the GitHub repository
+  - name: 'gcr.io/cloud-builders/git'
+    args: ['clone', 'https://github.com/viks1102/gcs-bukcet.git']
+    dir: '/workspace'
+
+  # Step 2: Change directory to the location of the Terraform scripts
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args: ['-c', 'cd /workspace/gcs-bukcet/gcs-bukcet && terraform init']
+    
+  # Step 3: Apply Terraform configuration to create the GCS bucket
+  - name: 'hashicorp/terraform:light'
+    entrypoint: '/bin/sh'
+    args:
+      - '-c'
+      - |
+        cd /workspace/gcs-bukcet/gcs-bukcet
+        terraform apply -auto-approve
+
+# Optional: Configure project ID and other environment variables
+substitutions:
+  _PROJECT_ID: 'dtonic-demo-k8s'
+
+# # Optional: Specify service account if needed
+# serviceAccount: 'projects/${_PROJECT_ID}/serviceAccounts/your-service-account@${_PROJECT_ID}.iam.gserviceaccount.com'
